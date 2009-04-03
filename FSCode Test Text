@@ -1,3 +1,4 @@
+<fscode>
 <title>FSCode Formatting</title>
 
 <toc align="right" float="yes"/>
@@ -201,3 +202,4 @@ Moving on, we're talking about something else but we're still associated with th
 Moving on, we're talking about something else but we're still associated with the image on the left.
 
 &lt;br wrap="object"/&gt;
+</fscode>

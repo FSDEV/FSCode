@@ -1,9 +1,23 @@
 package fscode;
 
+import fscode.tags.Text;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * This object generates output from FSCode.
@@ -48,34 +62,132 @@ import java.util.Map;
  *	</tr>
  * </table>
  *
+ * <br/>
+ *
+ * <b>TROUBLESHOOTING</b>:
+ *
+ * If you keep getting <code>SAXException</code>s then you may been to wrap the
+ * input in <code>&lt;fscode&gt;&lt;/fscode&gt;</code> tags to make it
+ * XML-compliant.  This kind of thing is more or less required for websites
+ * where the average user can be more or less guaranteed to not care about
+ * those tags.
+ *
  * @author cmiller
  * @since 0.1
  */
 public class FSCode implements Emitter, HtmlEmitter {
 
 	/**
+	 * Static document builder so that we don't have massive garbage collection
+	 * problems associated with tons of document builders lying around.
+	 */
+	private static DocumentBuilder docBuilder;
+
+	/**
 	 * Parent emitter in the event that some serious tree-grafting or
 	 * tree re-organization takes place.
 	 */
 	private Emitter parent;
-	// thinking that the macro will pro-actively inspect the tree,
-	// instead of caching it for later
-	//private LinkedList<TOCElement> tableOfContents;
+
 	/**
 	 * Order-sensitive list of all the children of this node.
 	 */
 	private LinkedList<Emitter> children;
+
 	/**
 	 * Configuration mapping for this node.
 	 */
 	private Map<String, Object> config;
 
+	/**
+	 * W3C XML document tree of the input FSCode.
+	 */
+	private Document codeTree;
+
+	/**
+	 * Default constructor nulls out or empty-initializes everything.
+	 *
+	 * @since 0.1
+	 */
 	private FSCode() {
 		parent = null;
 		//tableOfContents = new LinkedList<TOCElement>();
 		children = new LinkedList<Emitter>();
 		config = new TreeMap<String, Object>();
 			config.put("isWiki", "NO");
+	}
+
+	/**
+	 * Creates a new FSCode parser from a <code>String</code>, but does
+	 * <i>not</i> parse it yet.  Will throw various exceptions if the XML
+	 * is malformed.
+	 *
+	 * @throws org.xml.sax.SAXException Thrown if the XML is malformed.
+	 * @since 0.1
+	 */
+	public FSCode(String code) throws SAXException {
+		this();
+		try {
+			codeTree = getDocBuilder().parse(new InputSource(
+					new StringReader(code)));
+		} catch (IOException ex) {
+			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
+					"Since it's just a stupid iterator wrapper around" +
+					"a String, this really shouldn't happen!", ex);
+		}
+	}
+
+	/**
+	 * Creates a new FSCode parser from a <code>StringBuilder</code>.
+	 *
+	 * @see FSCode#FSCode(java.lang.String)
+	 * @throws org.xml.sax.SAXException Thrown if the XML is malformed.
+	 * @since 0.1
+	 */
+	public FSCode(StringBuilder code) throws SAXException {
+		this(code.toString());
+	}
+
+	/**
+	 * Yet another constructor that supports reading the FSCode from a file.
+	 *
+	 * @throws org.xml.sax.SAXException If there is an error parsing the XML.
+	 * @since 0.1
+	 */
+	public FSCode(File f) throws SAXException {
+		this();
+		try {
+			codeTree = getDocBuilder().parse(f);
+		} catch (IOException ex) {
+			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
+					"Reading from file failed.", ex);
+		}
+	}
+
+	/**
+	 * Creates a new FSCode parser from a <code>String</code> with the given
+	 * configuration settings.  May throw an exception if the XML is
+	 * malformed.
+	 *
+	 * @throws org.xml.sax.SAXException Thrown if the XML is malformed.
+	 * @since 0.1
+	 */
+	public FSCode(String code, Map<String, Object> config) throws SAXException {
+		this(code);
+		this.config = config;
+	}
+
+	/**
+	 * Creates a new FSCode parser from a <code>StringBuilder</code> with the
+	 * given configuration settings.  May throw an exception if the XML is
+	 * malformed.
+	 *
+	 * @throws org.xml.sax.SAXException Thrown if the XML is malformed.
+	 * @since 0.1
+	 */
+	public FSCode(StringBuilder code, Map<String, Object> config)
+			throws SAXException {
+		this(code.toString(), config);
 	}
 
 	public StringBuilder emitHtml() {
@@ -118,6 +230,66 @@ public class FSCode implements Emitter, HtmlEmitter {
 
 	public void appendChild(Emitter child) {
 		children.add(child);
+	}
+
+	/**
+	 * Parses the DOM tree into a tag object structure.  This must be done
+	 * before anything is emitted.  It returns the current FSCode so that
+	 * you can chain the calls together, eg.
+	 * <code>(new FSCode(input)).parse().emitHtml()</code>
+	 *
+	 * @since 0.1
+	 */
+	public FSCode parse() {
+
+		NodeList nl = codeTree.getChildNodes();
+
+		for(int i = 0; i!=nl.getLength(); i++) {
+			appendChild(parse(nl.item(i), this));
+		}
+
+		return this;
+	}
+
+	/**
+	 * Helper to <code>parse</code>, this is the recursive meat of the code
+	 * that treats the DOM tree.
+	 */
+	private Emitter parse(Node n, Emitter parent) {
+
+        int type = n.getNodeType();
+
+        switch (type) {
+        case Node.ELEMENT_NODE:
+            // run through the supported tags and macros
+            break;
+        case Node.TEXT_NODE:
+            return new Text(parent, n);
+        default:
+            // it gets ignored
+            break;
+        }
+
+		return null;
+	}
+
+	/**
+	 * Static-singleton accessor to the document builder to prevent it from
+	 * being <code>null</code> when accessed.
+	 */
+	private static DocumentBuilder getDocBuilder() {
+		if(docBuilder == null) {
+			try {
+				docBuilder = DocumentBuilderFactory.newInstance()
+						.newDocumentBuilder();
+			} catch (ParserConfigurationException ex) {
+				Logger.getLogger(FSCode.class.getName())
+						.log(Level.SEVERE, "Unable to create a new document" +
+						"builder, which is strange and not supposed to happen",
+						ex);
+			}
+		}
+		return docBuilder;
 	}
 
 }
