@@ -1,7 +1,5 @@
 package fscode;
 
-import fscode.macro.TOCElement;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -11,26 +9,31 @@ import java.util.Map;
  * This object generates output from FSCode.
  *
  * A number of settings may be sent to the parser via a Map.  The keys are
- * case sensitive, and the values case-sensetivity varies.  Valid options:
+ * case sensitive, and the values are Java Objects.  Valid options:
  *
  * <table border="1">
  *	<tr>
  *		<td><center><i>key</i></center></td>
+ *		<td><center><i>value type</i></center></td>
  *		<td><center><i>value</i></center></td>
  *		<td><center><i>doc</i></center></td>
  *	</tr>
  *	<tr>
+ *		<td colspan="4"><center><i>wiki-related options</i></center></td>
+ *	</tr>
+ *	<tr>
  *		<td><code>isWiki</code></td>
+ *		<td><code>java.lang.String</code></td>
  *		<td><code>{YES|NO|TRUE|FALSE}</code></td>
  *		<td>
  *			Defines whether or not the parsed FSCode is part of a wiki
  *			on an Internet site.  This affects some link tags.  Defaults to
- *			<code>NO</code>.  This is case-sensitive.
- *		</td>
+ *			<code>NO</code>.  This is case-sensitive.</td>
  *	</tr>
  *	<tr>
  *		<td><code>wikiBaseUrl</code></td>
- *		<td><i>valid URL</i></td>
+ *		<td><code>java.lang.String</code></td>
+ *		<td><i><center>valid URL</center></i></td>
  *		<td>
  *			The base URL for a wiki, such as
  *			<code>http://en.wikipedia.org/wiki/</code>.  The URL should be
@@ -41,27 +44,37 @@ import java.util.Map;
  *			This setting is ignored if <code>isWiki</code> is
  *			<code>{NULL|NO|FALSE}</code>, and is generally ignored if the
  *			<code>HtmlEmitter</code> is not used.  Defaults to
- *			<code>NULL</code>.
- *		</td>
+ *			<code>NULL</code>.</td>
  *	</tr>
  * </table>
  *
  * @author cmiller
+ * @since 0.1
  */
 public class FSCode implements Emitter, HtmlEmitter {
 
+	/**
+	 * Parent emitter in the event that some serious tree-grafting or
+	 * tree re-organization takes place.
+	 */
 	private Emitter parent;
 	// thinking that the macro will pro-actively inspect the tree,
 	// instead of caching it for later
 	//private LinkedList<TOCElement> tableOfContents;
+	/**
+	 * Order-sensitive list of all the children of this node.
+	 */
 	private LinkedList<Emitter> children;
-	private Map<String, String> config;
+	/**
+	 * Configuration mapping for this node.
+	 */
+	private Map<String, Object> config;
 
 	private FSCode() {
 		parent = null;
 		//tableOfContents = new LinkedList<TOCElement>();
 		children = new LinkedList<Emitter>();
-		config = new TreeMap<String, String>();
+		config = new TreeMap<String, Object>();
 			config.put("isWiki", "NO");
 	}
 
