@@ -1,9 +1,13 @@
 package fscode;
 
+import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
 import fscode.tags.Text;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -162,6 +166,33 @@ public class Emitter {
 			if(!c.isInstance(Emitter.class)) {
 				// return a dummy node
 				return new Emitter(parent, n).parse();
+			} else {
+				try {
+					try {
+						return ((Emitter)c.getConstructor(
+								Emitter.class,
+								Node.class).newInstance(parent, n)).parse();
+					} catch (InstantiationException ex) {
+						Logger.getLogger(Emitter.class.getName()).log(
+								Level.SEVERE, null, ex);
+					} catch (IllegalAccessException ex) {
+						Logger.getLogger(Emitter.class.getName()).log(
+								Level.SEVERE, null, ex);
+					} catch (IllegalArgumentException ex) {
+						Logger.getLogger(Emitter.class.getName()).log(
+								Level.SEVERE, null, ex);
+					} catch (InvocationTargetException ex) {
+						Logger.getLogger(Emitter.class.getName()).log(
+								Level.SEVERE, null, ex);
+					}
+				} catch (NoSuchMethodException ex) {
+					Logger.getLogger(Emitter.class.getName()).log(Level.SEVERE,
+							"Apparently we lost a constructor in there " +
+							"somewhere.", ex);
+				} catch (SecurityException ex) {
+					Logger.getLogger(Emitter.class.getName()).log(Level.SEVERE,
+							"I haven't got a clue how to respond to this", ex);
+				}
 			}
 
             break;

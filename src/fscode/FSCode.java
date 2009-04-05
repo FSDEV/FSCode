@@ -1,11 +1,8 @@
 package fscode;
 
-import fscode.tags.Text;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -13,9 +10,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -172,6 +166,9 @@ public class FSCode extends Emitter implements HtmlEmitter {
 		this(code.toString(), config);
 	}
 
+	/**
+	 * @since 0.1
+	 */
 	public StringBuilder emitHtml() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

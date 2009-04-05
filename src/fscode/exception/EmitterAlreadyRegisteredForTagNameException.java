@@ -1,4 +1,4 @@
-package fscode;
+package fscode.exception;
 
 /**
  * Exception that occurs when an Emitter is added to the Emitter list for a
