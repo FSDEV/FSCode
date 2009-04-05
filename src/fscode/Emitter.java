@@ -15,21 +15,44 @@ import org.w3c.dom.NodeList;
  */
 public class Emitter {
 
-	private Emitter parent;
+	/**
+	 * Parent node, used for tree walking up to higher nodes.
+	 */
+	protected Emitter parent;
 
-	private LinkedList<Emitter> children;
+	/**
+	 * All child nodes.
+	 */
+	protected LinkedList<Emitter> children;
 
-	private Node contents;
+	/**
+	 * All nodes need to know about their contents from the XML markup.
+	 */
+	protected Node contents;
 
-	private static TreeMap<String, Emitter> emitters;
+	/**
+	 * A complete list of all registered Emitters that can then be
+	 * automagically added to the generic parsing list.
+	 */
+	private static TreeMap<String, Class<? extends Emitter>> emitters;
 
+	/**
+	 * Creates a new Emitter with an empty child list.
+	 *
+	 * @since 0.1
+	 */
 	private Emitter() {
 		children = new LinkedList<Emitter>();
 	}
 
+	/**
+	 * Creates a new Emitter with a parent node and XML contents.  Does
+	 * <i>not</i> parse it.
+	 *
+	 * @since 0.1
+	 */
 	public Emitter(Emitter parent, Node contents) {
 		this();
-
 		this.contents = contents;
 	}
 
@@ -81,14 +104,31 @@ public class Emitter {
 		children.add(child);
 	}
 
+	/**
+	 * Get the XML contents of this node.
+	 *
+	 * @since 0.1
+	 */
 	public Node getContents() {
 		return contents;
 	}
 
+	/**
+	 * Set the XML contents of this node.  Generally discouraged.
+	 * @since 0.1
+	 */
 	public void setContents(Node contents) {
 		this.contents = contents;
 	}
 
+	/**
+	 * Generic parsing routine for this Emitter.  It is suggested that if you
+	 * do overload this method and if you do call the super method in that
+	 * code that you do it <i>last</i> to prevent child nodes from becoming
+	 * confused if your node has not yet treated its attributes.
+	 *
+	 * @since 0.1
+	 */
 	public Emitter parse() {
 		NodeList nl = contents.getChildNodes();
 
@@ -99,6 +139,12 @@ public class Emitter {
 		return this;
 	}
 
+	/**
+	 * The default parser.  Differentiates between all known nodes specified by
+	 * <code>getEmitters</code>.
+	 *
+	 * @since 0.1
+	 */
 	public static Emitter parse(Emitter parent, Node n) {
 		int type = n.getNodeType();
 
@@ -129,12 +175,57 @@ public class Emitter {
 		return null;
 	}
 
-	private static TreeMap<String, Emitter> getEmitters() {
+	/**
+	 * Generally you should not deviate from the default Emitter list, however,
+	 * this is included so that you can use <code>getEmitters</code> to take
+	 * a snapshot of the Emitter list before you reset it.  In that way you
+	 * could toggle between different parsing modes for different modules, such
+	 * as a forum and a wiki.
+	 *
+	 * @since 0.1
+	 */
+	public static void setEmitters(
+			TreeMap<String, Class<? extends Emitter>> emitters) {
+		Emitter.emitters = emitters;
+	}
+
+	/**
+	 * A map of all emitters and what tags they are bound to.
+	 *
+	 * @since 0.1
+	 */
+	public static TreeMap<String, Class<? extends Emitter>> getEmitters() {
 		if(emitters==null) {
-			emitters = new TreeMap<String, Emitter>();
+			emitters = new TreeMap<String, Class<? extends Emitter>>();
 			// list of all default emitters
 		}
  		return emitters;
+	}
+
+	/**
+	 * Add your own custom emitter to the default parser.
+	 *
+	 * @throws fscode.EmitterAlreadyRegisteredForTagNameException if you attempt
+	 *		to bind an Emitter to a tag that is already in use.
+	 * @since 0.1
+	 */
+	public static void addEmitter(
+			String tagName,
+			Class<? extends Emitter> emitter)
+		throws
+			EmitterAlreadyRegisteredForTagNameException {
+		if(getEmitters().containsKey(tagName))
+			throw new EmitterAlreadyRegisteredForTagNameException();
+		getEmitters().put(tagName, emitter);
+	}
+
+	/**
+	 * If you have tampered with the Emitter list you may wish to reset it.
+	 *
+	 * @since 0.1
+	 */
+	public static void resetEmitterList() {
+		emitters=null;
 	}
 
 }

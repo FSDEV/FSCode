@@ -89,11 +89,6 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	private Map<String, Object> config;
 
 	/**
-	 * W3C XML document tree of the input FSCode.
-	 */
-	private Document codeTree;
-
-	/**
 	 * Default constructor nulls out or empty-initializes everything.
 	 *
 	 * @since 0.1
@@ -115,7 +110,7 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	public FSCode(String code) throws SAXException {
 		this();
 		try {
-			codeTree = getDocBuilder().parse(new InputSource(
+			contents = getDocBuilder().parse(new InputSource(
 					new StringReader(code)));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
@@ -144,7 +139,7 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	public FSCode(File f) throws SAXException {
 		this();
 		try {
-			codeTree = getDocBuilder().parse(f);
+			contents = getDocBuilder().parse(f);
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Reading from file failed.", ex);
@@ -179,25 +174,6 @@ public class FSCode extends Emitter implements HtmlEmitter {
 
 	public StringBuilder emitHtml() {
 		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	/**
-	 * Parses the DOM tree into a tag object structure.  This must be done
-	 * before anything is emitted.  It returns the current FSCode so that
-	 * you can chain the calls together, eg.
-	 * <code>(new FSCode(input)).parse().emitHtml()</code>
-	 *
-	 * @since 0.1
-	 */
-	@Override
-	public FSCode parse() {
-		NodeList nl = codeTree.getChildNodes();
-
-		for(int i = 0; i!=nl.getLength(); i++) {
-			appendChild(Emitter.parse(this, nl.item(i)));
-		}
-
-		return this;
 	}
 
 	/**

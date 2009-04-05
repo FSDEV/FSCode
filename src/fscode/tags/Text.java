@@ -16,11 +16,6 @@ import org.w3c.dom.Node;
 public class Text extends Emitter implements HtmlEmitter {
 
 	/**
-	 * The original DOM node.
-	 */
-	private Node contents;
-
-	/**
 	 * HTML character replacement table.  Used to replace potentially dangerous
 	 * or annoying HTML characters/entities with the user-intended/safer
 	 * versions of those entities.
@@ -49,13 +44,6 @@ public class Text extends Emitter implements HtmlEmitter {
 		}
 
 		return new StringBuilder(toReturn);
-	}
-
-	public Node getContents() {
-		return contents;
-	}
-	public void setContents(Node contents) {
-		this.contents = contents;
 	}
 
 	@Override
