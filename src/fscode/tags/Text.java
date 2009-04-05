@@ -13,17 +13,12 @@ import org.w3c.dom.Node;
  * @author cmiller
  * @since 0.1
  */
-public class Text implements Emitter, HtmlEmitter {
+public class Text extends Emitter implements HtmlEmitter {
 
 	/**
 	 * The original DOM node.
 	 */
 	private Node contents;
-
-	/**
-	 * Parent emitter.
-	 */
-	private Emitter parent;
 
 	/**
 	 * HTML character replacement table.  Used to replace potentially dangerous
@@ -36,8 +31,6 @@ public class Text implements Emitter, HtmlEmitter {
 	 */
 	private static HashMap<String, String> htmlReplacementTable;
 
-	private Text() { }
-
 	/**
 	 * Creates a new text node with the supplied node and parent
 	 * <code>Emitter</code>.
@@ -45,8 +38,7 @@ public class Text implements Emitter, HtmlEmitter {
 	 * @since 0.1
 	 */
 	public Text(Emitter parent, Node contents) {
-		this.parent = parent;
-		this.contents = contents;
+		super(parent, contents);
 	}
 	
 	public StringBuilder emitHtml() {
@@ -66,21 +58,17 @@ public class Text implements Emitter, HtmlEmitter {
 		this.contents = contents;
 	}
 
-	public Emitter getParent() {
-		return parent;
-	}
-	public void setParent(Emitter parent) {
-		this.parent = parent;
-	}
-
+	@Override
 	public List<Emitter> getChildren() {
 		// the text tag is a filler - it can't support any kind of child
 		// node
 		return new LinkedList<Emitter>();
 	}
+	@Override
 	public void setChildren(List<Emitter> children) {
 		// just do nothing
 	}
+	@Override
 	public void appendChild(Emitter child) {
 		// just do nothing
 	}

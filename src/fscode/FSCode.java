@@ -75,24 +75,13 @@ import org.xml.sax.SAXException;
  * @author cmiller
  * @since 0.1
  */
-public class FSCode implements Emitter, HtmlEmitter {
+public class FSCode extends Emitter implements HtmlEmitter {
 
 	/**
 	 * Static document builder so that we don't have massive garbage collection
 	 * problems associated with tons of document builders lying around.
 	 */
 	private static DocumentBuilder docBuilder;
-
-	/**
-	 * Parent emitter in the event that some serious tree-grafting or
-	 * tree re-organization takes place.
-	 */
-	private Emitter parent;
-
-	/**
-	 * Order-sensitive list of all the children of this node.
-	 */
-	private LinkedList<Emitter> children;
 
 	/**
 	 * Configuration mapping for this node.
@@ -110,9 +99,7 @@ public class FSCode implements Emitter, HtmlEmitter {
 	 * @since 0.1
 	 */
 	private FSCode() {
-		parent = null;
-		//tableOfContents = new LinkedList<TOCElement>();
-		children = new LinkedList<Emitter>();
+		super(null, null);
 		config = new TreeMap<String, Object>();
 			config.put("isWiki", "NO");
 	}
@@ -195,44 +182,6 @@ public class FSCode implements Emitter, HtmlEmitter {
 	}
 
 	/**
-	 * Although this is the root document, it can be grafted onto other parts
-	 * of the object tree, and as such this method will default to return
-	 * <code>null</code> but might not.
-	 *
-	 * @since 0.1
-	 */
-	public Emitter getParent() {
-		return parent;
-	}
-
-	/**
-	 * Used to graft a whole document into another document - a crazy feat,
-	 * yes, but useful.  Think of MoinMoin wiki's ability to inclue pages
-	 * or parts of pages into other pages via a macro...  Yes, I am insane
-	 * with power!
-	 */
-	public void setParent(Emitter parent) {
-		throw new UnsupportedOperationException("Inappropriate use of this " +
-				"function on this class.");
-	}
-
-	public List<Emitter> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<Emitter> children) {
-		if(children instanceof LinkedList) {
-			this.children = (LinkedList<Emitter>)children;
-		} else {
-			this.children = new LinkedList<Emitter>(children);
-		}
-	}
-
-	public void appendChild(Emitter child) {
-		children.add(child);
-	}
-
-	/**
 	 * Parses the DOM tree into a tag object structure.  This must be done
 	 * before anything is emitted.  It returns the current FSCode so that
 	 * you can chain the calls together, eg.
@@ -240,37 +189,15 @@ public class FSCode implements Emitter, HtmlEmitter {
 	 *
 	 * @since 0.1
 	 */
+	@Override
 	public FSCode parse() {
-
 		NodeList nl = codeTree.getChildNodes();
 
 		for(int i = 0; i!=nl.getLength(); i++) {
-			appendChild(parse(nl.item(i), this));
+			appendChild(Emitter.parse(this, nl.item(i)));
 		}
 
 		return this;
-	}
-
-	/**
-	 * Helper to <code>parse</code>, this is the recursive meat of the code
-	 * that treats the DOM tree.
-	 */
-	private Emitter parse(Node n, Emitter parent) {
-
-        int type = n.getNodeType();
-
-        switch (type) {
-        case Node.ELEMENT_NODE:
-            // run through the supported tags and macros
-            break;
-        case Node.TEXT_NODE:
-            return new Text(parent, n);
-        default:
-            // it gets ignored
-            break;
-        }
-
-		return null;
 	}
 
 	/**
