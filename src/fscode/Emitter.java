@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -33,6 +34,12 @@ public class Emitter {
 	 * All nodes need to know about their contents from the XML markup.
 	 */
 	protected Node contents;
+
+	/**
+	 * Used in the creation of XPath queries, good for simple, clean code
+	 * to manipulate and search through the DOM XML tree.
+	 */
+	protected static XPathFactory queryFactory;
 
 	/**
 	 * A complete list of all registered Emitters that can then be
@@ -204,6 +211,17 @@ public class Emitter {
         }
 
 		return null;
+	}
+
+	/**
+	 * Anti-null accessor to the <code>XPathFactory</code>.
+	 * 
+	 * @since 0.1
+	 */
+	protected static XPathFactory getQueryFactory() {
+		if(queryFactory==null)
+			queryFactory = XPathFactory.newInstance();
+		return queryFactory;
 	}
 
 	/**

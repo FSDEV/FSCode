@@ -10,6 +10,11 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -81,6 +86,12 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	 * Configuration mapping for this node.
 	 */
 	private Map<String, Object> config;
+
+	/**
+	 * Precompiled XPath query for accessing the child nodes of the root
+	 * <code>fscode</code> tag.
+	 */
+	private static XPathExpression rootXPath;
 
 	/**
 	 * Default constructor nulls out or empty-initializes everything.
@@ -167,10 +178,55 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	}
 
 	/**
+	 * Overriden in order to break out of the <code>fscode</code> tag.
+	 */
+	@Override
+	public FSCode parse() {
+		Node fcontents = null;
+		try {
+			fcontents = (Node)getRootXPath()
+					.evaluate(contents, XPathConstants.NODE);
+		} catch (XPathExpressionException ex) {
+			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
+					"There is no fscode tag in the input", ex);
+			return null;
+		} finally {
+			NodeList nl = fcontents.getChildNodes();
+
+			for(int i = 0; i!=nl.getLength(); i++) {
+				appendChild(Emitter.parse(this, nl.item(i)));
+			}
+
+			return this;
+		}
+	}
+
+	/**
+	 * Get the precompiled XPath expression to find the fscode tag and get
+	 * it.
+	 */
+	private static XPathExpression getRootXPath() {
+		if(rootXPath == null) {
+			try {
+				rootXPath = getQueryFactory().newXPath().compile("//fscode");
+			} catch (XPathExpressionException ex) {
+				Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
+						"Apparently my query is bogus", ex);
+			}
+		}
+		return rootXPath;
+	}
+
+	/**
 	 * @since 0.1
 	 */
 	public StringBuilder emitHtml() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		StringBuilder emission = new StringBuilder();
+		for(Emitter em:getChildren()) {
+			if(em instanceof HtmlEmitter)
+				emission.append(((HtmlEmitter)em).emitHtml());
+		}
+		return emission;
 	}
 
 	/**

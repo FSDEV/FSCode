@@ -1,6 +1,7 @@
 package test;
 
 import fscode.FSCode;
+import fscode.HtmlEmitter;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +53,7 @@ public class HtmlEmitterTest {
 			Logger.getLogger(HtmlEmitterTest.class.getName()).log(Level.SEVERE,
 					"There was an error parsing the XML", ex);
 		}
-		System.out.println(testCode.parse().emitHtml());
+		System.out.println(((HtmlEmitter)testCode.parse()).emitHtml());
 	}
 
 }
