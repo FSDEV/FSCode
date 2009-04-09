@@ -2,6 +2,7 @@ package fscode;
 
 import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
 import fscode.tags.Bold;
+import fscode.tags.Italic;
 import fscode.tags.Text;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -163,10 +164,6 @@ public class Emitter {
         switch (type) {
         case Node.ELEMENT_NODE:
 			// run through the supported tags and macros
-
-
-
-
 			Class c = null;
 
 			c = getEmitters().get(n.getNodeName());
@@ -248,6 +245,7 @@ public class Emitter {
 			emitters = new TreeMap<String, Class<? extends Emitter>>();
 			// list of all default emitters
 			emitters.put("b", Bold.class);
+			emitters.put("i", Italic.class);
 		}
  		return emitters;
 	}
