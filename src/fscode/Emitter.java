@@ -1,6 +1,7 @@
 package fscode;
 
 import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
+import fscode.tags.Bold;
 import fscode.tags.Text;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -162,44 +163,43 @@ public class Emitter {
         switch (type) {
         case Node.ELEMENT_NODE:
 			// run through the supported tags and macros
+
+
+
+
 			Class c = null;
-			try {
-				c = Class.forName(n.getNodeName());
-			} catch (ClassNotFoundException ex) {
-				// return a dummy node
+
+			c = getEmitters().get(n.getNodeName());
+
+			if(c == null) {
 				return new Emitter(parent, n).parse();
 			}
 
-			if(!c.isInstance(Emitter.class)) {
-				// return a dummy node
-				return new Emitter(parent, n).parse();
-			} else {
+			try {
 				try {
-					try {
-						return ((Emitter)c.getConstructor(
-								Emitter.class,
-								Node.class).newInstance(parent, n)).parse();
-					} catch (InstantiationException ex) {
-						Logger.getLogger(Emitter.class.getName()).log(
-								Level.SEVERE, null, ex);
-					} catch (IllegalAccessException ex) {
-						Logger.getLogger(Emitter.class.getName()).log(
-								Level.SEVERE, null, ex);
-					} catch (IllegalArgumentException ex) {
-						Logger.getLogger(Emitter.class.getName()).log(
-								Level.SEVERE, null, ex);
-					} catch (InvocationTargetException ex) {
-						Logger.getLogger(Emitter.class.getName()).log(
-								Level.SEVERE, null, ex);
-					}
-				} catch (NoSuchMethodException ex) {
-					Logger.getLogger(Emitter.class.getName()).log(Level.SEVERE,
-							"Apparently we lost a constructor in there " +
-							"somewhere.", ex);
-				} catch (SecurityException ex) {
-					Logger.getLogger(Emitter.class.getName()).log(Level.SEVERE,
-							"I haven't got a clue how to respond to this", ex);
+					return ((Emitter)c.getConstructor(
+							Emitter.class,
+							Node.class).newInstance(parent, n)).parse();
+				} catch (InstantiationException ex) {
+					Logger.getLogger(Emitter.class.getName()).log(
+							Level.SEVERE, null, ex);
+				} catch (IllegalAccessException ex) {
+					Logger.getLogger(Emitter.class.getName()).log(
+							Level.SEVERE, null, ex);
+				} catch (IllegalArgumentException ex) {
+					Logger.getLogger(Emitter.class.getName()).log(
+							Level.SEVERE, null, ex);
+				} catch (InvocationTargetException ex) {
+					Logger.getLogger(Emitter.class.getName()).log(
+							Level.SEVERE, null, ex);
 				}
+			} catch (NoSuchMethodException ex) {
+				Logger.getLogger(Emitter.class.getName()).log(Level.SEVERE,
+						"Apparently we lost a constructor in there " +
+						"somewhere.", ex);
+			} catch (SecurityException ex) {
+				Logger.getLogger(Emitter.class.getName()).log(Level.SEVERE,
+						"I haven't got a clue how to respond to this", ex);
 			}
 
             break;
@@ -247,6 +247,7 @@ public class Emitter {
 		if(emitters==null) {
 			emitters = new TreeMap<String, Class<? extends Emitter>>();
 			// list of all default emitters
+			emitters.put("b", Bold.class);
 		}
  		return emitters;
 	}
