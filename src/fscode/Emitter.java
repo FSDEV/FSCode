@@ -2,6 +2,7 @@ package fscode;
 
 import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
 import fscode.tags.Bold;
+import fscode.tags.Heading;
 import fscode.tags.Italic;
 import fscode.tags.Text;
 import java.lang.reflect.InvocationTargetException;
@@ -246,6 +247,13 @@ public class Emitter {
 			// list of all default emitters
 			emitters.put("b", Bold.class);
 			emitters.put("i", Italic.class);
+			emitters.put("h", Heading.class);
+			emitters.put("h1", Heading.class);
+			emitters.put("h2", Heading.class);
+			emitters.put("h3", Heading.class);
+			emitters.put("h4", Heading.class);
+			emitters.put("h5", Heading.class);
+			emitters.put("h6", Heading.class);
 		}
  		return emitters;
 	}
