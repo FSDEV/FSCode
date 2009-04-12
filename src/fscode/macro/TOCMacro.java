@@ -22,7 +22,6 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 
 	private int depth = Integer.MAX_VALUE;
 
-
 	private int align = TOCMacro.ALIGN_LEFT;
 
 	private boolean inline = true;
