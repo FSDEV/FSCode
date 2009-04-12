@@ -1,6 +1,7 @@
 package fscode;
 
 import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
+import fscode.macro.TOCMacro;
 import fscode.tags.Bold;
 import fscode.tags.Heading;
 import fscode.tags.Italic;
@@ -68,6 +69,7 @@ public class Emitter {
 	public Emitter(Emitter parent, Node contents) {
 		this();
 		this.contents = contents;
+		this.parent = parent;
 	}
 
 	/**
@@ -223,6 +225,36 @@ public class Emitter {
 	}
 
 	/**
+	 * Finds the root emitter in the current Emitter tree.  Note that if the
+	 * root node has itself as its parent and not <code>null</code> then this
+	 * will infinitely loop.
+	 * 
+	 * @since 0.1
+	 */
+	public Emitter getRootEmitter() {
+		if(getParent()!=null)
+			return getParent().getRootEmitter();
+		else
+			return this;
+	}
+
+	/**
+	 * Get an ordered list of all child emitters to this node.
+	 *
+	 * @since 0.1
+	 */
+	public LinkedList<Emitter> getAllChildEmitters() {
+		LinkedList<Emitter> childEmitters = new LinkedList<Emitter>();
+
+		for(Emitter em:getChildren()) {
+			childEmitters.add(em);
+			childEmitters.addAll(em.getAllChildEmitters());
+		}
+
+		return childEmitters;
+	}
+
+	/**
 	 * Generally you should not deviate from the default Emitter list, however,
 	 * this is included so that you can use <code>getEmitters</code> to take
 	 * a snapshot of the Emitter list before you reset it.  In that way you
@@ -254,6 +286,7 @@ public class Emitter {
 			emitters.put("h4", Heading.class);
 			emitters.put("h5", Heading.class);
 			emitters.put("h6", Heading.class);
+			emitters.put("macro:toc", TOCMacro.class);
 		}
  		return emitters;
 	}

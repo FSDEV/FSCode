@@ -1,7 +1,7 @@
 <fscode>
 <title>FSCode Formatting</title>
 
-<toc align="right" float="yes"/>
+<macro:toc align="right" inline="no"/>
 
 <h level="1">Tags</h>
 
@@ -33,6 +33,8 @@ A few example tags are given:
 </table>
 
 <h1>Basic Formatting Tags</h1>
+
+<macro:toc align="right" inline="no" start-depth="1"/>
 
 <h2>Bold Text</h2>
 
