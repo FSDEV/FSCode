@@ -1,5 +1,6 @@
 package fscode.macro;
 
+import fscode.Const;
 import fscode.Emitter;
 import fscode.HtmlEmitter;
 import fscode.exception.NonfatalException;
@@ -17,13 +18,9 @@ import org.w3c.dom.Node;
  */
 public class TOCMacro extends Emitter implements HtmlEmitter {
 
-	public static final int ALIGN_RIGHT  = 0;
-	public static final int ALIGN_LEFT   = 1;
-	public static final int ALIGN_CENTER = 2;
-
 	private int depth = Integer.MAX_VALUE;
 
-	private int align = TOCMacro.ALIGN_LEFT;
+	private Const align = Const.ALIGN_LEFT;
 
 	private boolean inline = true;
 
@@ -45,11 +42,11 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 			attrStr = attrs.getNamedItem("align").getTextContent();
 			if(attrStr!=null)
 				if(attrStr.equalsIgnoreCase("RIGHT"))
-					align = TOCMacro.ALIGN_RIGHT;
+					align = Const.ALIGN_RIGHT;
 				else if(attrStr.equalsIgnoreCase("LEFT"))
-					align = TOCMacro.ALIGN_LEFT;
+					align = Const.ALIGN_LEFT;
 				else if(attrStr.equalsIgnoreCase("CENTER"))
-					align = TOCMacro.ALIGN_CENTER;
+					align = Const.ALIGN_CENTER;
 		}
 		if(attrs.getNamedItem("inline")!=null) {
 			attrStr = attrs.getNamedItem("align").getTextContent();
@@ -84,11 +81,11 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 
 		if(inline==false) {
 			emission.append("<div style=\"toc-box\" ");
-			if(align==TOCMacro.ALIGN_CENTER)
+			if(align==Const.ALIGN_CENTER)
 				emission.append("align=\"center\" ");
-			else if(align==TOCMacro.ALIGN_LEFT)
+			else if(align==Const.ALIGN_LEFT)
 				emission.append("align=\"left\" ");
-			else if(align==TOCMacro.ALIGN_RIGHT)
+			else if(align==Const.ALIGN_RIGHT)
 				emission.append("align=\"right\" ");
 			
 			emission.append(">\n");
