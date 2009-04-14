@@ -2,6 +2,7 @@ package fscode.macro;
 
 import fscode.Emitter;
 import fscode.HtmlEmitter;
+import fscode.exception.NonfatalException;
 import java.util.LinkedList;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -70,6 +71,16 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 		for(TOCElement tc:elements)
 			if(tc.getIndentLevel()>depth)
 				elements.remove(tc);
+
+		if(elements.size()==0) {
+			getRootEmitter().appendProblem(
+					new NonfatalException(this, "You have a Table of Contents" +
+					" which has nothing in it.  While this isn't fatal, and I" +
+					" will still print an (empty) table of contents box, this" +
+					" isn't precisely desirable and you may consider removing" +
+					" the table of contents macro creating this problem.")
+					);
+		}
 
 		if(inline==false) {
 			emission.append("<div style=\"toc-box\" ");

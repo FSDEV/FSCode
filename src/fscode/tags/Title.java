@@ -2,6 +2,7 @@ package fscode.tags;
 
 import fscode.Emitter;
 import fscode.HtmlEmitter;
+import fscode.exception.NonfatalException;
 import java.util.LinkedList;
 import org.w3c.dom.Node;
 
@@ -27,8 +28,15 @@ public class Title extends Emitter implements HtmlEmitter {
 				getRootEmitter().getAllChildEmitters();
 
 		for(Emitter em:allEmitters)
-			if(em instanceof Title)
+			if(em instanceof Title) {
+				getRootEmitter().appendProblem(
+						new NonfatalException(null,"You may not have more tha" +
+						"n one title per document.  Please remove one.  The s" +
+						"econd title has been ignored and the program should " +
+						"continue normally.")
+						);
 				return null;
+			}
 
 		return super.parse();
 	}

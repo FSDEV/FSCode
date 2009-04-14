@@ -1,10 +1,13 @@
 package fscode;
 
 import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
+import fscode.exception.NonfatalException;
 import fscode.macro.TOCMacro;
 import fscode.tags.Bold;
 import fscode.tags.Heading;
 import fscode.tags.Italic;
+import fscode.tags.Super;
+import fscode.tags.Sub;
 import fscode.tags.Text;
 import fscode.tags.Title;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +42,11 @@ public class Emitter {
 	 * All nodes need to know about their contents from the XML markup.
 	 */
 	protected Node contents;
+
+	/**
+	 * Big list of all problems that have happened while parsing.
+	 */
+	protected LinkedList<NonfatalException> problems;
 
 	/**
 	 * Used in the creation of XPath queries, good for simple, clean code
@@ -256,6 +264,36 @@ public class Emitter {
 	}
 
 	/**
+	 * Anti-null accessor to our problems.
+	 */
+	private LinkedList<NonfatalException> getProblems_Private() {
+		if(problems==null)
+			problems = new LinkedList<NonfatalException>();
+		return problems;
+	}
+
+	/**
+	 * Returns all problems, if any, that were encountered while parsing this
+	 * document.  Problems are stored with the root node, although if you do
+	 * some treewalking and document-merging you may need to search for nodes
+	 * to get all the problems.
+	 *
+	 * @since 0.1
+	 */
+	public LinkedList<NonfatalException> getProblems() {
+		return problems;
+	}
+
+	/**
+	 * Add a problem to the list of woes.
+	 *
+	 * @since 0.1
+	 */
+	public void appendProblem(NonfatalException e) {
+		getProblems_Private().add(e);
+	}
+
+	/**
 	 * Generally you should not deviate from the default Emitter list, however,
 	 * this is included so that you can use <code>getEmitters</code> to take
 	 * a snapshot of the Emitter list before you reset it.  In that way you
@@ -288,6 +326,8 @@ public class Emitter {
 			emitters.put("h5", Heading.class);
 			emitters.put("h6", Heading.class);
 			emitters.put("title", Title.class);
+			emitters.put("super", Super.class);
+			emitters.put("sub", Sub.class);
 			emitters.put("macro:toc", TOCMacro.class);
 		}
  		return emitters;
