@@ -6,6 +6,7 @@ import fscode.tags.Bold;
 import fscode.tags.Heading;
 import fscode.tags.Italic;
 import fscode.tags.Text;
+import fscode.tags.Title;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -286,6 +287,7 @@ public class Emitter {
 			emitters.put("h4", Heading.class);
 			emitters.put("h5", Heading.class);
 			emitters.put("h6", Heading.class);
+			emitters.put("title", Title.class);
 			emitters.put("macro:toc", TOCMacro.class);
 		}
  		return emitters;

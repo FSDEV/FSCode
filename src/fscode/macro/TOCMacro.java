@@ -95,6 +95,8 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 			emission.append("</a>\n");
 		}
 
+		emission.append("<a href=\"#top\">return to top</a>\n");
+
 		if(inline==false)
 			emission.append("</div>\n");
 

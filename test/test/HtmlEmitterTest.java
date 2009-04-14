@@ -48,7 +48,7 @@ public class HtmlEmitterTest {
 	public void outputTestText() {
 		FSCode testCode = null;
 		try {
-			testCode = new FSCode(new File("FSCode Test Text"));
+			testCode = new FSCode(new File("fscode_test_text.fscode.xml"));
 		} catch (SAXException ex) {
 			Logger.getLogger(HtmlEmitterTest.class.getName()).log(Level.SEVERE,
 					"There was an error parsing the XML", ex);
