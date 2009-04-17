@@ -106,8 +106,8 @@ Subscripted text is done using the <code>sub</code> tag.
 		<cell><center>Generated Text</center></cell>
 	</row>
 	<row>
-		<cell>&lt;i&gt;f&lt;/i&gt;`&lt;sub&gt;5&lt;/sub&gt;(&lt;i&gt;x&lt;/i&gt;) = &lt;i&gt;ku&lt;/i&gt;(&lt;i&gt;x&lt;/i&gt;)</cell>
-		<cell><i>f</i>`<sub>5</sub>(<i>x</i>) = <i>ku</i>`(<i>x</i>)</cell>
+		<cell>&lt;i&gt;f&lt;/i&gt;'&lt;sub&gt;5&lt;/sub&gt;(&lt;i&gt;x&lt;/i&gt;) = &lt;i&gt;ku&lt;/i&gt;(&lt;i&gt;x&lt;/i&gt;)</cell>
+		<cell><i>f</i>'<sub>5</sub>(<i>x</i>) = <i>ku</i>'(<i>x</i>)</cell>
 	</row>
 </table>
 

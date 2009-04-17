@@ -148,7 +148,7 @@ public class Table extends Emitter implements HtmlEmitter {
 				emission.append("%\"");
 			}
 		}
-		if(border != 1) {
+		if(border != 0) {
 			emission.append(" border=\"");
 			emission.append(border);
 			emission.append("\"");

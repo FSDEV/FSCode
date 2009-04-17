@@ -92,15 +92,27 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 		emission.append("<b>Table of Contents</b>\n<ul>\n");
 		
 		// content
+		TOCElement last = null; int unclosedLists = 0;
 		for(TOCElement tc:elements) {
-			for(int i=0;i<tc.getIndentLevel();++i)
-				emission.append("&nbsp;");
+			if(last!=null) {
+				if(tc.getIndentLevel()<last.getIndentLevel()&&unclosedLists>0) {
+					emission.append("</ul>\n");
+					unclosedLists--;
+				}
+				if(tc.getIndentLevel()>last.getIndentLevel()) {
+					emission.append("<ul>\n");
+					unclosedLists++;
+				}
+			}
 			emission.append("<li><a href=\"");
 			emission.append(tc.getHtmlAnchor());
 			emission.append("\">");
 			emission.append(tc.getName());
 			emission.append("</a></li>\n");
+			last = tc;
 		}
+		for(;unclosedLists!=0;unclosedLists--)
+			emission.append("</ul>\n");
 
 		emission.append("<a href=\"#top\">return to top</a>\n</ul>\n");
 

@@ -5,6 +5,7 @@ import fscode.exception.NonfatalException;
 import fscode.macro.TOCMacro;
 import fscode.tags.Bold;
 import fscode.tags.Cell;
+import fscode.tags.Center;
 import fscode.tags.Heading;
 import fscode.tags.Italic;
 import fscode.tags.Row;
@@ -350,6 +351,7 @@ public class Emitter {
 			emitters.put("h4", Heading.class);
 			emitters.put("h5", Heading.class);
 			emitters.put("h6", Heading.class);
+			emitters.put("center", Center.class);
 			emitters.put("title", Title.class);
 			emitters.put("super", Super.class);
 			emitters.put("sub", Sub.class);
