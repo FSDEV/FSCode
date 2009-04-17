@@ -4,15 +4,19 @@ import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
 import fscode.exception.NonfatalException;
 import fscode.macro.TOCMacro;
 import fscode.tags.Bold;
+import fscode.tags.Cell;
 import fscode.tags.Heading;
 import fscode.tags.Italic;
+import fscode.tags.Row;
 import fscode.tags.Super;
 import fscode.tags.Sub;
+import fscode.tags.Table;
 import fscode.tags.Text;
 import fscode.tags.Title;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +46,13 @@ public class Emitter {
 	 * All nodes need to know about their contents from the XML markup.
 	 */
 	protected Node contents;
+
+	/**
+	 * Configuration mapping for this node.
+	 *
+	 * @see FSCode
+	 */
+	protected Map<String, Object> config;
 
 	/**
 	 * Big list of all problems that have happened while parsing.
@@ -294,6 +305,20 @@ public class Emitter {
 	}
 
 	/**
+	 * Gets the configuration mapping for this node.
+	 *
+	 * @since 0.1
+	 */
+	public Map<String, Object> getConfig() {
+		if(config == null)
+			if(parent!=null)
+				return parent.getConfig();
+			else
+				return null;
+		return null;
+	}
+
+	/**
 	 * Generally you should not deviate from the default Emitter list, however,
 	 * this is included so that you can use <code>getEmitters</code> to take
 	 * a snapshot of the Emitter list before you reset it.  In that way you
@@ -328,6 +353,9 @@ public class Emitter {
 			emitters.put("title", Title.class);
 			emitters.put("super", Super.class);
 			emitters.put("sub", Sub.class);
+			emitters.put("table", Table.class);
+			emitters.put("row", Row.class);
+			emitters.put("cell", Cell.class);
 			emitters.put("macro:toc", TOCMacro.class);
 		}
  		return emitters;

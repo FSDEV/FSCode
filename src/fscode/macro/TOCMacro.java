@@ -5,6 +5,7 @@ import fscode.Emitter;
 import fscode.HtmlEmitter;
 import fscode.exception.NonfatalException;
 import java.util.LinkedList;
+import java.util.ResourceBundle;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -71,39 +72,37 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 
 		if(elements.size()==0) {
 			getRootEmitter().appendProblem(
-					new NonfatalException(this, "You have a Table of Contents" +
-					" which has nothing in it.  While this isn't fatal, and I" +
-					" will still print an (empty) table of contents box, this" +
-					" isn't precisely desirable and you may consider removing" +
-					" the table of contents macro creating this problem.")
+					new NonfatalException(this, ResourceBundle
+					.getBundle((String)getConfig().get("lang"))
+					.getString("MACRO_TOCMACRO_EMPTYTOC"))
 					);
 		}
 
 		if(inline==false) {
-			emission.append("<div style=\"toc-box\" ");
+			emission.append("<div style=\"float:");
 			if(align==Const.ALIGN_CENTER)
-				emission.append("align=\"center\" ");
+				emission.append("center");
 			else if(align==Const.ALIGN_LEFT)
-				emission.append("align=\"left\" ");
+				emission.append("left");
 			else if(align==Const.ALIGN_RIGHT)
-				emission.append("align=\"right\" ");
+				emission.append("right");
 			
-			emission.append(">\n");
+			emission.append("\">\n");
 		}
-		emission.append("<b>Table of Contents</b>\n");
+		emission.append("<b>Table of Contents</b>\n<ul>\n");
 		
 		// content
 		for(TOCElement tc:elements) {
 			for(int i=0;i<tc.getIndentLevel();++i)
 				emission.append("&nbsp;");
-			emission.append("<a href=\"");
+			emission.append("<li><a href=\"");
 			emission.append(tc.getHtmlAnchor());
 			emission.append("\">");
 			emission.append(tc.getName());
-			emission.append("</a>\n");
+			emission.append("</a></li>\n");
 		}
 
-		emission.append("<a href=\"#top\">return to top</a>\n");
+		emission.append("<a href=\"#top\">return to top</a>\n</ul>\n");
 
 		if(inline==false)
 			emission.append("</div>\n");

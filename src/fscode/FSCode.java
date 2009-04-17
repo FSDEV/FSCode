@@ -1,6 +1,7 @@
 package fscode;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.TreeMap;
@@ -31,6 +32,23 @@ import org.xml.sax.SAXException;
  *		<td><center><i>value</i></center></td>
  *		<td><center><i>doc</i></center></td>
  *	</tr>
+ *  <tr>
+ *		<td><code>lang</code></td>
+ *		<td><code>java.lang.String</code></td>
+ *		<td><i>path to a valid resource bundle</i></td>
+ *		<td>The location of a set of strings in a resource bundle that will
+ *			be used to emit error messages to the user.  Use this to relocalize
+ *			to another language of your choice.  Defaults to
+ *			<code>en_us</code></td>
+ *  </tr>
+ *	<tr>
+ *		<td><code>tagset</code></td>
+ *		<td><code>java.lang.String</code></td>
+ *		<td><i>path to a valid resource bundle</i></td>
+ *		<td>The location of a set of strings in a resource bundle that will
+ *			be used to generate HTML.  This allows you to alter the HTML
+ *			output on the fly.  Defaults to <code>default</code>.</td>
+ *	</tr>
  *	<tr>
  *		<td colspan="4"><center><i>wiki-related options</i></center></td>
  *	</tr>
@@ -38,8 +56,7 @@ import org.xml.sax.SAXException;
  *		<td><code>isWiki</code></td>
  *		<td><code>java.lang.String</code></td>
  *		<td><code>{YES|NO|TRUE|FALSE}</code></td>
- *		<td>
- *			Defines whether or not the parsed FSCode is part of a wiki
+ *		<td>Defines whether or not the parsed FSCode is part of a wiki
  *			on an Internet site.  This affects some link tags.  Defaults to
  *			<code>NO</code>.  This is case-sensitive.</td>
  *	</tr>
@@ -47,8 +64,7 @@ import org.xml.sax.SAXException;
  *		<td><code>wikiBaseUrl</code></td>
  *		<td><code>java.lang.String</code></td>
  *		<td><i><center>valid URL</center></i></td>
- *		<td>
- *			The base URL for a wiki, such as
+ *		<td>The base URL for a wiki, such as
  *			<code>http://en.wikipedia.org/wiki/</code>.  The URL should be
  *			whatever is required to append the name of a wiki page, so you
  *			should pay attention to trailing slashes.  This is not
@@ -83,11 +99,6 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	private static DocumentBuilder docBuilder;
 
 	/**
-	 * Configuration mapping for this node.
-	 */
-	private Map<String, Object> config;
-
-	/**
 	 * Precompiled XPath query for accessing the child nodes of the root
 	 * <code>fscode</code> tag.
 	 */
@@ -102,6 +113,8 @@ public class FSCode extends Emitter implements HtmlEmitter {
 		super(null, null);
 		config = new TreeMap<String, Object>();
 			config.put("isWiki", "NO");
+			config.put("lang", "en_us");
+			config.put("tagset", "default_tagset");
 	}
 
 	/**
@@ -116,7 +129,7 @@ public class FSCode extends Emitter implements HtmlEmitter {
 		this();
 		try {
 			contents = getDocBuilder().parse(new InputSource(
-					new StringReader(code)));
+					new StringReader(code.replaceAll("&", "&amp;"))));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Since it's just a stupid iterator wrapper around" +
@@ -144,7 +157,18 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	public FSCode(File f) throws SAXException {
 		this();
 		try {
-			contents = getDocBuilder().parse(f);
+			StringBuffer sb = new StringBuffer();
+			int tmp;
+			FileInputStream in = new FileInputStream(f);
+			while(in.available()>0) {
+				tmp = in.read();
+				if(tmp=='&')
+					sb.append("&amp;");
+				else
+					sb.append(((char)tmp));
+			}
+			contents = getDocBuilder().parse(new InputSource(
+					new StringReader(sb.toString())));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Reading from file failed.", ex);
@@ -175,6 +199,11 @@ public class FSCode extends Emitter implements HtmlEmitter {
 	public FSCode(StringBuilder code, Map<String, Object> config)
 			throws SAXException {
 		this(code.toString(), config);
+	}
+
+	public FSCode(File f, Map<String, Object> config) throws SAXException {
+		this(f);
+		this.config = config;
 	}
 
 	/**

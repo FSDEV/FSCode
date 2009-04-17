@@ -4,6 +4,7 @@ import fscode.Const;
 import fscode.Emitter;
 import fscode.HtmlEmitter;
 import fscode.exception.NonfatalException;
+import java.util.ResourceBundle;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -17,7 +18,7 @@ public class Table extends Emitter implements HtmlEmitter {
 
 	private Const align = Const.ALIGN_LEFT;
 
-	private int width = 100;
+	private int width = 0;
 
 	private Const width_type = Const.WIDTH_PERCENT;
 
@@ -32,7 +33,7 @@ public class Table extends Emitter implements HtmlEmitter {
 	}
 
 	@Override
-	public Table parse() {
+	public Emitter parse() {
 		// 1: Parse table attributes
 		NamedNodeMap attrs = contents.getAttributes();
 		String attrStr;
@@ -54,9 +55,9 @@ public class Table extends Emitter implements HtmlEmitter {
 				if(border<0) {
 					border = 1;
 					getRootEmitter().appendProblem(
-							new NonfatalException(this, "You tried to set a n" +
-							"egative border.  This doesn't work.  The border " +
-							"has been reset to 1.  Please fix this.")
+							new NonfatalException(this, ResourceBundle
+							.getBundle((String)getConfig().get("lang"))
+							.getString("TAGS_TABLE_INVALID_BORDER"))
 							);
 				}
 
@@ -80,10 +81,9 @@ public class Table extends Emitter implements HtmlEmitter {
 						break;
 				if(num.length()==0) {
 					getRootEmitter().appendProblem(
-							new NonfatalException(this, "When in the course o" +
-							"f determining the width to make the table, the n" +
-							"umber could not be read!  Please fix this!  For " +
-							"now using a default value of 100%")
+							new NonfatalException(this, ResourceBundle
+							.getBundle((String)getConfig().get("lang"))
+							.getString("TAGS_TABLE_INVALID_WIDTH"))
 							);
 					width = 100;
 					width_type = Const.WIDTH_PERCENT;
@@ -95,10 +95,9 @@ public class Table extends Emitter implements HtmlEmitter {
 						width_type = Const.WIDTH_PERCENT;
 					else {
 						getRootEmitter().appendProblem(
-								new NonfatalException(this, "Invalid width ty" +
-								"pe given, it is not a percentage or in pixel" +
-								"s.  Defaulting to percentage.  Please fix th" +
-								"is!")
+								new NonfatalException(this, ResourceBundle
+								.getBundle((String)getConfig().get("lang"))
+								.getString("TAGS_TABLE_INVALID_WIDTH_TYPE"))
 								);
 						width_type = Const.WIDTH_PERCENT;
 					}
@@ -106,25 +105,66 @@ public class Table extends Emitter implements HtmlEmitter {
 			}
 			if(width_type==Const.WIDTH_PERCENT&&width>100)
 				getRootEmitter().appendProblem(
-						new NonfatalException(this, "Table width invalid, you" +
-						" have selected a percentage-based width, yet the wid" +
-						"th is greater than 100.  This doesn't make sense!  T" +
-						"his will cause undefined behavior.  You should fix t" +
-						"his.")
+						new NonfatalException(this, ResourceBundle
+						.getBundle((String)getConfig().get("lang"))
+						.getString("TAGS_TABLE_INVALID_WIDTH_PERCENTAGE"))
 						);
 		}
 		// 2: Parse table children
-		
-
+		return super.parse();
 
 		// 3: Inspect table children.  If there are any nodes that aren't table
 		//    rows, send errors to the user.  Orphan those nodes
-		
-		return this;
+/*		for(Emitter em:getChildren()) {
+			if(!em.getClass().isInstance(Row.class)) {
+				getRootEmitter().appendProblem(
+						new NonfatalException(this, ResourceBundle
+						.getBundle((String)getConfig().get("lang"))
+						.getString("TAGS_TABLE_INVALID_CHILD_NODE"))
+						);
+			}
+		}*/
+
+		//return this;
 	}
 
 	public StringBuilder emitHtml() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		StringBuilder emission = new StringBuilder();
+
+		// opening tag
+		emission.append("<table");
+		if(align == Const.ALIGN_CENTER)
+			emission.append(" align=\"center\"");
+		else if(align == Const.ALIGN_RIGHT)
+			emission.append(" align=\"right\"");
+		if(width_type == Const.WIDTH_PIXELS) {
+			emission.append(" width=\"");
+			emission.append(width);
+			emission.append("px\"");
+		} else {
+			if(width != 0) {
+				emission.append(" width=\"");
+				emission.append(width);
+				emission.append("%\"");
+			}
+		}
+		if(border != 1) {
+			emission.append(" border=\"");
+			emission.append(border);
+			emission.append("\"");
+		}
+		emission.append(">\n");
+
+		// contents
+		for(Emitter em:getChildren())
+			if(em instanceof Row
+					&&em instanceof HtmlEmitter)
+				emission.append(((HtmlEmitter)em).emitHtml());
+
+		// closing tag
+		emission.append("</table>\n");
+
+		return emission;
 	}
 
 	

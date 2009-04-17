@@ -53,7 +53,12 @@ public class HtmlEmitterTest {
 			Logger.getLogger(HtmlEmitterTest.class.getName()).log(Level.SEVERE,
 					"There was an error parsing the XML", ex);
 		}
+		System.out.println("<html>\n" +
+				"\t<head><title>test output</title>\n" +
+				"\t</head>\n" +
+				"\t<body>");
 		System.out.println(((HtmlEmitter)testCode.parse()).emitHtml());
+		System.out.println("\t</body>\n</html>");
 	}
 
 }

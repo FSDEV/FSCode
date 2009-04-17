@@ -19,12 +19,12 @@ public class Super extends Emitter implements HtmlEmitter {
 	public StringBuilder emitHtml() {
 		StringBuilder emission = new StringBuilder();
 
-		emission.append("<super>");
+		emission.append("<sup>");
 		for(Emitter em:getChildren()) {
 			if(em instanceof HtmlEmitter)
 				emission.append(((HtmlEmitter)em).emitHtml());
 		}
-		emission.append("</super>");
+		emission.append("</sup>");
 
 		return emission;
 	}
