@@ -129,7 +129,8 @@ public class FSCode extends Emitter implements HtmlEmitter {
 		this();
 		try {
 			contents = getDocBuilder().parse(new InputSource(
-					new StringReader(code.replaceAll("&", "&amp;"))));
+					new StringReader(code.replaceAll("&", "&amp;")
+					.replaceAll("\n\n", "&lt;p/&gt;"))));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Since it's just a stupid iterator wrapper around" +
@@ -166,9 +167,11 @@ public class FSCode extends Emitter implements HtmlEmitter {
 					sb.append("&amp;");
 				else
 					sb.append(((char)tmp));
+
 			}
 			contents = getDocBuilder().parse(new InputSource(
-					new StringReader(sb.toString())));
+					new StringReader(sb.toString()
+					.replaceAll("\n\n", "&lt;p/&gt;"))));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Reading from file failed.", ex);
