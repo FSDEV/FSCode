@@ -61,19 +61,12 @@ import org.xml.sax.SAXException;
  *			<code>NO</code>.  This is case-sensitive.</td>
  *	</tr>
  *	<tr>
- *		<td><code>wikiBaseUrl</code></td>
- *		<td><code>java.lang.String</code></td>
- *		<td><i><center>valid URL</center></i></td>
- *		<td>The base URL for a wiki, such as
- *			<code>http://en.wikipedia.org/wiki/</code>.  The URL should be
- *			whatever is required to append the name of a wiki page, so you
- *			should pay attention to trailing slashes.  This is not
- *			case-sensitive, and is not Java-parsed, so it can fail quietly.
- *			<p/>
- *			This setting is ignored if <code>isWiki</code> is
- *			<code>{NULL|NO|FALSE}</code>, and is generally ignored if the
- *			<code>HtmlEmitter</code> is not used.  Defaults to
- *			<code>NULL</code>.</td>
+ *		<td><code>wikiProviders</code></td>
+ *		<td><code>java.util.Map&lt;String, fscode.tag.WikiProvider&gt;</code></td>
+ *		<td><i><center>list of wiki providers, mapped by the given name of the wiki</center></i></td>
+ *		<td>A list of wikis that the FSCode parser will be aware of.  This
+ *			affects the behavior of some tags.  The <code>WikiProvider</code>
+ *			that represents the current wiki will be at "" in the map.</td>
  *	</tr>
  * </table>
  *
@@ -129,8 +122,7 @@ public class FSCode extends Emitter implements HtmlEmitter {
 		this();
 		try {
 			contents = getDocBuilder().parse(new InputSource(
-					new StringReader(code.replaceAll("&", "&amp;")
-					.replaceAll("\n\n", "&lt;p/&gt;"))));
+					new StringReader(code.replaceAll("&", "&amp;"))));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Since it's just a stupid iterator wrapper around" +
@@ -170,8 +162,7 @@ public class FSCode extends Emitter implements HtmlEmitter {
 
 			}
 			contents = getDocBuilder().parse(new InputSource(
-					new StringReader(sb.toString()
-					.replaceAll("\n\n", "&lt;p/&gt;"))));
+					new StringReader(sb.toString())));
 		} catch (IOException ex) {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"Reading from file failed.", ex);
@@ -222,15 +213,14 @@ public class FSCode extends Emitter implements HtmlEmitter {
 			Logger.getLogger(FSCode.class.getName()).log(Level.SEVERE,
 					"There is no fscode tag in the input", ex);
 			return null;
-		} finally {
-			NodeList nl = fcontents.getChildNodes();
-
-			for(int i = 0; i!=nl.getLength(); i++) {
-				appendChild(Emitter.parse(this, nl.item(i)));
-			}
-
-			return this;
 		}
+		NodeList nl = fcontents.getChildNodes();
+
+		for(int i = 0; i!=nl.getLength(); i++) {
+			appendChild(Emitter.parse(this, nl.item(i)));
+		}
+
+		return this;
 	}
 
 	/**

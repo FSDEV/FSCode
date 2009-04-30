@@ -46,6 +46,11 @@ public class HtmlEmitterTest {
 
 	@Test
 	public void outputTestText() {
+		System.out.println("REPLACEMENT TEST:::::::");
+		System.out.println("foo\n\nbar\n".replaceAll("([\\r\\n][\\s]?){2,}", "<p/>"));
+		System.out.println("\n\n\n\n\n");
+
+
 		FSCode testCode = null;
 		try {
 			testCode = new FSCode(new File("fscode_test_text.fscode.xml"));

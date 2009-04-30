@@ -40,7 +40,7 @@ public class Text extends Emitter implements HtmlEmitter {
 		String toReturn = contents.getNodeValue();
 
 		for(String key:getHtmlReplacementTable().keySet()) {
-			toReturn.replaceAll(key, getHtmlReplacementTable().get(key));
+			toReturn = toReturn.replaceAll(key, getHtmlReplacementTable().get(key));
 		}
 
 		return new StringBuilder(toReturn);
@@ -65,6 +65,7 @@ public class Text extends Emitter implements HtmlEmitter {
 		if(htmlReplacementTable==null) {
 			htmlReplacementTable = new HashMap<String, String>();
 			htmlReplacementTable.put("  ", "&nbsp;");
+			htmlReplacementTable.put("([\\r\\n][\\s]?){2,}", "<p/>");
 		}
 		return htmlReplacementTable;
 	}

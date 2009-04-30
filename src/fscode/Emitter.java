@@ -9,6 +9,7 @@ import fscode.tags.Cell;
 import fscode.tags.Center;
 import fscode.tags.Code;
 import fscode.tags.Heading;
+import fscode.tags.InternalLink;
 import fscode.tags.Italic;
 import fscode.tags.Row;
 import fscode.tags.Super;
@@ -359,6 +360,7 @@ public class Emitter {
 			emitters.put("sub", Sub.class);
 			emitters.put("br", Break.class);
 			emitters.put("code", Code.class);
+			emitters.put("link", InternalLink.class);
 			emitters.put("table", Table.class);
 			emitters.put("row", Row.class);
 			emitters.put("cell", Cell.class);
