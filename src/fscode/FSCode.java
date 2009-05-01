@@ -62,11 +62,22 @@ import org.xml.sax.SAXException;
  *	</tr>
  *	<tr>
  *		<td><code>wikiProviders</code></td>
- *		<td><code>java.util.Map&lt;String, fscode.tag.WikiProvider&gt;</code></td>
- *		<td><i><center>list of wiki providers, mapped by the given name of the wiki</center></i></td>
+ *		<td><code>java.util.Map&lt;String, fscode.tag.WikiProvider
+ *			&gt;</code></td>
+ *		<td><i><center>list of wiki providers, mapped by the given name of
+ *			the wiki</center></i></td>
  *		<td>A list of wikis that the FSCode parser will be aware of.  This
  *			affects the behavior of some tags.  The <code>WikiProvider</code>
  *			that represents the current wiki will be at "" in the map.</td>
+ *	</tr>
+ *	<tr>
+ *		<td><code>forbiddenLinks</code></td>
+ *		<td><code>java.util.Collection&lt;String&gt;</code></td>
+ *		<td><i><center>collection of regular expressions defining urls that
+ *			may not be linked to</center></i></td>
+ *		<td>A collection of regular expressions that define URLs that will be
+ *			specifically prevented from appearing.  Useful for preventing spam
+ *			or other such activities.</td>
  *	</tr>
  * </table>
  *

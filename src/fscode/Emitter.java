@@ -3,20 +3,7 @@ package fscode;
 import fscode.exception.EmitterAlreadyRegisteredForTagNameException;
 import fscode.exception.NonfatalException;
 import fscode.macro.TOCMacro;
-import fscode.tags.Bold;
-import fscode.tags.Break;
-import fscode.tags.Cell;
-import fscode.tags.Center;
-import fscode.tags.Code;
-import fscode.tags.Heading;
-import fscode.tags.InternalLink;
-import fscode.tags.Italic;
-import fscode.tags.Row;
-import fscode.tags.Super;
-import fscode.tags.Sub;
-import fscode.tags.Table;
-import fscode.tags.Text;
-import fscode.tags.Title;
+import fscode.tags.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +43,7 @@ public class Emitter {
 	 *
 	 * @see FSCode
 	 */
-	protected Map<String, Object> config;
+	protected Map<String, Object> config = null;
 
 	/**
 	 * Big list of all problems that have happened while parsing.
@@ -319,7 +306,7 @@ public class Emitter {
 				return parent.getConfig();
 			else
 				return null;
-		return null;
+		return config;
 	}
 
 	/**
@@ -361,6 +348,7 @@ public class Emitter {
 			emitters.put("br", Break.class);
 			emitters.put("code", Code.class);
 			emitters.put("link", InternalLink.class);
+			emitters.put("url", ExternalLink.class);
 			emitters.put("table", Table.class);
 			emitters.put("row", Row.class);
 			emitters.put("cell", Cell.class);
