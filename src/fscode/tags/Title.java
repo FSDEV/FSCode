@@ -30,11 +30,7 @@ public class Title extends Emitter implements HtmlEmitter {
 
 		for(Emitter em:allEmitters)
 			if(em instanceof Title) {
-				getRootEmitter().appendProblem(
-						new NonfatalException(null,ResourceBundle
-						.getBundle((String)getConfig().get("lang"))
-						.getString("TAGS_TITLE_MULTIPLE_TITLE_TAGS"))
-						);
+				reportProblem("TAGS_TITLE_MULTIPLE_TITLE_TAGS");
 				return null;
 			}
 

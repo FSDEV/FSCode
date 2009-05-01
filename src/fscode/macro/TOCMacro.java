@@ -70,13 +70,8 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 			if(tc.getIndentLevel()>depth)
 				elements.remove(tc);
 
-		if(elements.size()==0) {
-			getRootEmitter().appendProblem(
-					new NonfatalException(this, ResourceBundle
-					.getBundle((String)getConfig().get("lang"))
-					.getString("MACRO_TOCMACRO_EMPTYTOC"))
-					);
-		}
+		if(elements.size()==0)
+			reportProblem("MACRO_TOCMACRO_EMPTYTOC");
 
 		if(inline==false) {
 			emission.append("<div style=\"float:");

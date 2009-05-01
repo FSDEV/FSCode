@@ -34,19 +34,12 @@ public class ExternalLink extends Emitter implements HtmlEmitter {
 				for(String rgx:illegalUrls) {
 					if(location.matches(rgx)) {
 						location = "";
-						getRootEmitter().appendProblem(
-								new NonfatalException(this, ResourceBundle
-								.getBundle((String)getConfig().get("lang"))
-								.getString("TAGS_EXTERNAL_LINK_ILLEGAL_URL")));
+						reportProblem("TAGS_EXTERNAL_LINK_ILLEGAL_URL");
 					}
 				}
 		} else {
 			location = "";
-			getRootEmitter().appendProblem(
-							new NonfatalException(this, ResourceBundle
-							.getBundle((String)getConfig().get("lang"))
-							.getString("TAGS_EXTERNAL_LINK_NO_LINK_SUPPLIED"))
-							);
+			reportProblem("TAGS_EXTERNAL_LINK_NO_LINK_SUPPLIED");
 		}
 		return super.parse();
 	}

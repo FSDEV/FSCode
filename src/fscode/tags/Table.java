@@ -54,11 +54,7 @@ public class Table extends Emitter implements HtmlEmitter {
 
 				if(border<0) {
 					border = 1;
-					getRootEmitter().appendProblem(
-							new NonfatalException(this, ResourceBundle
-							.getBundle((String)getConfig().get("lang"))
-							.getString("TAGS_TABLE_INVALID_BORDER"))
-							);
+					reportProblem("TAGS_TABLE_INVALID_BORDER");
 				}
 
 			}
@@ -80,11 +76,7 @@ public class Table extends Emitter implements HtmlEmitter {
 					else
 						break;
 				if(num.length()==0) {
-					getRootEmitter().appendProblem(
-							new NonfatalException(this, ResourceBundle
-							.getBundle((String)getConfig().get("lang"))
-							.getString("TAGS_TABLE_INVALID_WIDTH"))
-							);
+					reportProblem("TAGS_TABLE_INVALID_WIDTH");
 					width = 100;
 					width_type = Const.WIDTH_PERCENT;
 				} else {
@@ -94,21 +86,13 @@ public class Table extends Emitter implements HtmlEmitter {
 					else if(type.toString().equalsIgnoreCase("%"))
 						width_type = Const.WIDTH_PERCENT;
 					else {
-						getRootEmitter().appendProblem(
-								new NonfatalException(this, ResourceBundle
-								.getBundle((String)getConfig().get("lang"))
-								.getString("TAGS_TABLE_INVALID_WIDTH_TYPE"))
-								);
+						reportProblem("TAGS_TABLE_INVALID_WIDTH_TYPE");
 						width_type = Const.WIDTH_PERCENT;
 					}
 				}
 			}
 			if(width_type==Const.WIDTH_PERCENT&&width>100)
-				getRootEmitter().appendProblem(
-						new NonfatalException(this, ResourceBundle
-						.getBundle((String)getConfig().get("lang"))
-						.getString("TAGS_TABLE_INVALID_WIDTH_PERCENTAGE"))
-						);
+				reportProblem("TAGS_TABLE_INVALID_WIDTH_PERCENTAGE");
 		}
 		// 2: Parse table children
 		return super.parse();

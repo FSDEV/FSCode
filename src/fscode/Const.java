@@ -18,7 +18,17 @@ public enum Const {
 	ALIGN_RIGHT,
 	ALIGN_LEFT,
 	ALIGN_CENTER,
+
+	/**
+	 * Vertical alignment of objects.
+	 */
+	ALIGN_MIDDLE,
+	ALIGN_TOP,
+	ALIGN_BOTTOM,
 	
 	WIDTH_PIXELS,
-	WIDTH_PERCENT
+	WIDTH_PERCENT,
+
+	HEIGHT_PIXELS,
+	HEIGHT_PERCENT
 }

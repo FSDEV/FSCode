@@ -36,22 +36,14 @@ public class InternalLink extends Emitter implements HtmlEmitter {
 		else
 			wiki = wikiProviders.get("");
 		if(wiki==null) {
-			getRootEmitter().appendProblem(
-					new NonfatalException(this, ResourceBundle
-					.getBundle((String)getConfig().get("lang"))
-					.getString("TAGS_INTERNAL_LINK_NO_SUCH_WIKI"))
-					);
+			reportProblem("TAGS_INTERNAL_LINK_NO_SUCH_WIKI");
 			return super.parse();
 		}
 		n = nnm.getNamedItem("page");
 		if(n!=null) {
 			wikiPage = n.getTextContent();
 		} else {
-			getRootEmitter().appendProblem(
-					new NonfatalException(this, ResourceBundle
-					.getBundle((String)getConfig().get("lang"))
-					.getString("TAGS_INTERNAL_LINK_NO_PAGE_PROVIDED"))
-					);
+			reportProblem("TAGS_INTERNAL_LINK_NO_PAGE_PROVIDED");
 		}
 		return super.parse();
 	}

@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,6 +165,20 @@ public class Emitter {
 		}
 
 		return this;
+	}
+
+	/**
+	 * Used by <code>Emitter</code>s to report problems that aren't caught by
+	 * the XML parser.
+	 *
+	 * @param localizedProblem the text in a resource bundle.
+	 * @since 0.1
+	 */
+	protected void reportProblem(String localizedProblem) {
+		getRootEmitter().appendProblem(
+						new NonfatalException(this, ResourceBundle
+						.getBundle((String)getConfig().get("lang"))
+						.getString(localizedProblem)));
 	}
 
 	/**
@@ -352,6 +367,7 @@ public class Emitter {
 			emitters.put("table", Table.class);
 			emitters.put("row", Row.class);
 			emitters.put("cell", Cell.class);
+			emitters.put("image", EmbeddedImage.class);
 			emitters.put("macro:toc", TOCMacro.class);
 		}
  		return emitters;
