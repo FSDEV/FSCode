@@ -243,16 +243,16 @@ right-margin optional Given in pixels, how much space to keep between the right 
 			emission.append("\"");
 		}
 
+		// horizontal align
+		if(horizontal_align==Const.ALIGN_LEFT)
+			emission.append(" align=\"left\"");
+		else if(horizontal_align==Const.ALIGN_RIGHT)
+			emission.append(" align=\"right\"");
+		else if(horizontal_align==Const.ALIGN_CENTER)
+			emission.append(" align=\"center\"");
+
 		// style-based stuff
 		StringBuilder styles = new StringBuilder();
-
-		// horizontal align
-		if(horizontal_align!=Const.ALIGN_LEFT) {
-			if(horizontal_align==Const.ALIGN_RIGHT)
-				styles.append("right:auto;");
-			else if(horizontal_align==Const.ALIGN_CENTER)
-				styles.append("left:50%;");
-		}
 
 		// vertical align
 		if(vertical_align!=Const.ALIGN_MIDDLE) {
