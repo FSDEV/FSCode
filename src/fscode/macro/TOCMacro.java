@@ -99,7 +99,7 @@ public class TOCMacro extends Emitter implements HtmlEmitter {
 					unclosedLists++;
 				}
 			}
-			emission.append("<li><a href=\"");
+			emission.append("<li><a href=\"#");
 			emission.append(tc.getHtmlAnchor());
 			emission.append("\">");
 			emission.append(tc.getName());

@@ -116,7 +116,7 @@ public class Heading extends Emitter implements HtmlEmitter, TOCElement {
 	 * @since 0.1
 	 */
 	public String getHtmlAnchor() {
-		return "#"+getName().replace(" ", "-");
+		return getName().replace(" ", "-");
 	}
 
 	/**
